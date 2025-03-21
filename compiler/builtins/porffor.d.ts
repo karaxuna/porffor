@@ -131,6 +131,11 @@ type PorfforGlobal = {
   printStatic(str: string): void;
   readArgv(index: i32, out: bytestring): i32;
   readFile(path: bytestring, out: bytestring): i32;
+  println(stringPtr: i32): void;
+  pinMode(pin: i32, mode: i32): void;
+  digitalWrite(pin: i32, value: i32): void;
+  digitalRead(pin: i32): i32;
+  delay(ms: i32): void;
 };
 
 declare global {

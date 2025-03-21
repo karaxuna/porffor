@@ -7,6 +7,36 @@ import './prefs.js';
 
 export const importedFuncs = [
   {
+    name: '__Porffor_println',
+    import: '__wasm_println',
+    params: [ Valtype.i32 ],
+    returns: 0
+  },
+  {
+    name: '__Porffor_pinMode',
+    import: '__wasm_pin_mode',
+    params: [ Valtype.i32, Valtype.i32 ],
+    returns: 0
+  },
+  {
+    name: '__Porffor_digitalWrite',
+    import: '__wasm_digital_write',
+    params: [ Valtype.i32, Valtype.i32 ],
+    returns: 0
+  },
+  {
+    name: '__Porffor_digitalRead',
+    import: '__wasm_digital_read',
+    params: [ Valtype.i32 ],
+    returns: [ Valtype.i32 ]
+  },
+  {
+    name: '__Porffor_delay',
+    import: '__wasm_delay',
+    params: [ Valtype.i32 ],
+    returns: 0
+  },
+  {
     name: 'print',
     import: 'p',
     params: 1,
