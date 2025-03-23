@@ -139,7 +139,8 @@ export const BuiltinFuncs = function() {
       [ Opcodes.f64_const, 4 ],
       [ Opcodes.f64_add ],
       Opcodes.i32_trunc_sat_f64_u,
-      [ Opcodes.call, importedFuncs.__Flibbert_println ]
+      [ Opcodes.call, importedFuncs.__Flibbert_println ],
+      [ Opcodes.end ]
     ]
   };
   this.println.usesImports = true;
@@ -152,7 +153,8 @@ export const BuiltinFuncs = function() {
     wasm: [
       [ Opcodes.local_get, 0 ],
       Opcodes.i32_trunc_sat_f64_u,
-      [ Opcodes.call, importedFuncs.__Flibbert_delay ]
+      [ Opcodes.call, importedFuncs.__Flibbert_delay ],
+      [ Opcodes.end ]
     ]
   };
   this.delay.usesImports = true;
@@ -167,7 +169,8 @@ export const BuiltinFuncs = function() {
       Opcodes.i32_trunc_sat_f64_u,
       [ Opcodes.local_get, 1 ],
       Opcodes.i32_trunc_sat_f64_u,
-      [ Opcodes.call, importedFuncs.__Flibbert_pin_mode ]
+      [ Opcodes.call, importedFuncs.__Flibbert_pin_mode ],
+      [ Opcodes.end ]
     ]
   };
   this.pinMode.usesImports = true;
@@ -182,7 +185,8 @@ export const BuiltinFuncs = function() {
       Opcodes.i32_trunc_sat_f64_u,
       [ Opcodes.local_get, 1 ],
       Opcodes.i32_trunc_sat_f64_u,
-      [ Opcodes.call, importedFuncs.__Flibbert_digital_write ]
+      [ Opcodes.call, importedFuncs.__Flibbert_digital_write ],
+      [ Opcodes.end ]
     ]
   };
   this.digitalWrite.usesImports = true;
@@ -196,7 +200,8 @@ export const BuiltinFuncs = function() {
       [ Opcodes.local_get, 0 ],
       Opcodes.i32_trunc_sat_f64_u,
       [ Opcodes.call, importedFuncs.__Flibbert_digital_read ],
-      Opcodes.f64_convert_i32_u
+      Opcodes.f64_convert_i32_u,
+      [ Opcodes.return ]
     ]
   };
   this.digitalRead.usesImports = true;
