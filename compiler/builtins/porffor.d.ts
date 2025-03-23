@@ -131,11 +131,6 @@ type PorfforGlobal = {
   printStatic(str: string): void;
   readArgv(index: i32, out: bytestring): i32;
   readFile(path: bytestring, out: bytestring): i32;
-  println(stringPtr: i32): void;
-  pinMode(pin: i32, mode: i32): void;
-  digitalWrite(pin: i32, value: i32): void;
-  digitalRead(pin: i32): i32;
-  delay(ms: i32): void;
 };
 
 declare global {
@@ -153,6 +148,12 @@ declare global {
 
   const print: (arg: any) => void;
   const printChar: (char: number) => void;
+
+  const println: (text: string) => void;
+  const pinMode: (pin: f64, mode: f64) => void;
+  const digitalWrite: (pin: f64, value: f64) => void;
+  const digitalRead: (pin: f64) => f64;
+  const delay: (ms: f64) => void;
 
   type i32 = number;
   type i64 = number;

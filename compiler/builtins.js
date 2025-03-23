@@ -7,31 +7,31 @@ import './prefs.js';
 
 export const importedFuncs = [
   {
-    name: '__Porffor_println',
+    name: '__Flibbert_println',
     import: '__wasm_println',
     params: [ Valtype.i32 ],
     returns: 0
   },
   {
-    name: '__Porffor_pinMode',
+    name: '__Flibbert_pinMode',
     import: '__wasm_pin_mode',
     params: [ Valtype.i32, Valtype.i32 ],
     returns: 0
   },
   {
-    name: '__Porffor_digitalWrite',
+    name: '__Flibbert_digitalWrite',
     import: '__wasm_digital_write',
     params: [ Valtype.i32, Valtype.i32 ],
     returns: 0
   },
   {
-    name: '__Porffor_digitalRead',
+    name: '__Flibbert_digitalRead',
     import: '__wasm_digital_read',
     params: [ Valtype.i32 ],
     returns: [ Valtype.i32 ]
   },
   {
-    name: '__Porffor_delay',
+    name: '__Flibbert_delay',
     import: '__wasm_delay',
     params: [ Valtype.i32 ],
     returns: 0
@@ -129,6 +129,78 @@ export const BuiltinVars = function(ctx) {
 };
 
 export const BuiltinFuncs = function() {
+  this.println = {
+    params: [ Valtype.f64 ],
+    locals: [],
+    returns: [],
+    returnType: TYPES.undefined,
+    wasm: [
+      [ Opcodes.local_get, 0 ],
+      [ Opcodes.f64_const, 4 ],
+      [ Opcodes.f64_add ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.call, importedFuncs.__Flibbert_println ]
+    ]
+  };
+  this.println.usesImports = true;
+
+  this.delay = {
+    params: [ Valtype.f64 ],
+    locals: [],
+    returns: [],
+    returnType: TYPES.undefined,
+    wasm: [
+      [ Opcodes.local_get, 0 ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.call, importedFuncs.__Flibbert_delay ]
+    ]
+  };
+  this.delay.usesImports = true;
+
+  this.pinMode = {
+    params: [ Valtype.f64, Valtype.f64 ],
+    locals: [],
+    returns: [],
+    returnType: TYPES.undefined,
+    wasm: [
+      [ Opcodes.local_get, 0 ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.local_get, 1 ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.call, importedFuncs.__Flibbert_pin_mode ]
+    ]
+  };
+  this.pinMode.usesImports = true;
+
+  this.digitalWrite = {
+    params: [ Valtype.f64, Valtype.f64 ],
+    locals: [],
+    returns: [],
+    returnType: TYPES.undefined,
+    wasm: [
+      [ Opcodes.local_get, 0 ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.local_get, 1 ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.call, importedFuncs.__Flibbert_digital_write ]
+    ]
+  };
+  this.digitalWrite.usesImports = true;
+
+  this.digitalRead = {
+    params: [ Valtype.f64 ],
+    locals: [],
+    returns: [ Valtype.f64 ],
+    returnType: TYPES.number,
+    wasm: [
+      [ Opcodes.local_get, 0 ],
+      Opcodes.i32_trunc_sat_f64_u,
+      [ Opcodes.call, importedFuncs.__Flibbert_digital_read ],
+      Opcodes.f64_convert_i32_u
+    ]
+  };
+  this.digitalRead.usesImports = true;
+
   this.isNaN = {
     params: [ valtypeBinary ],
     locals: [],
