@@ -176,15 +176,30 @@ export default (funcs, globals, tags, pages, data, noTreeshake = false) => {
   time('type section');
 
   if (importFuncs.length > 0) {
-    section(Section.import, unsignedLEB128_length(importFuncs.length) + importFuncs.length * 5);
+    section(Section.import, unsignedLEB128_length(importFuncs.length) + importFuncs.reduce((acc, x) => 
+      acc + unsignedLEB128_length(x.moduleName.length) + x.moduleName.length + 
+      unsignedLEB128_length(x.name.length) + x.name.length + 2, 0));
     unsigned(importFuncs.length);
-    for (let i = 0; i < importFuncs.length; i++) {
-      const x = importFuncs[i];
-      byte(0); byte(1);
-      byte(x.import.charCodeAt(0));
-      byte(ExportDesc.func);
-      byte(getType(x.params, x.returns));
+  }
+
+  for (let i = 0; i < importFuncs.length; i++) {
+    const x = importFuncs[i];
+  
+    // Write module name (e.g., "env")
+    unsigned(x.moduleName.length); // Length of module name (LEB128)
+    for (let j = 0; j < x.moduleName.length; j++) {
+      byte(x.moduleName.charCodeAt(j));
     }
+  
+    // Write field name (e.g., "log")
+    unsigned(x.name.length); // Length of field name (LEB128)
+    for (let j = 0; j < x.name.length; j++) {
+      byte(x.name.charCodeAt(j));
+    }
+  
+    // Write import type (function) and signature
+    byte(ExportDesc.func);
+    byte(getType(x.params, x.returns));
   }
   time('import section');
 
@@ -326,7 +341,7 @@ export default (funcs, globals, tags, pages, data, noTreeshake = false) => {
 
     for (let i = 0; i < exportFuncs.length; i++) {
       const x = exportFuncs[i];
-      string(x.name === '#main' ? 'm' : x.name);
+      string(x.name === '#main' ? 'main' : x.name);
       byte(ExportDesc.func);
       unsigned(x.index - importDelta);
     }

@@ -23,8 +23,9 @@ setImports();
  * @param {number} results - Number of results
  * @param {function} js - Native (your world) function to call as import implementation
  * @param {string} c - C source code to compile as import implementation
+ * @param {string} moduleName - Module name to import from (default: "")
  */
-export const createImport = (name, params, returns, js = null, c = null) => {
+export const createImport = (name, params, returns, js = null, c = null, moduleName = "") => {
   if (!globalThis.valtypeBinary) {
     globalThis.valtype ??= Prefs.valtype ?? 'f64';
     globalThis.valtypeBinary = Valtype[valtype];
@@ -39,7 +40,7 @@ export const createImport = (name, params, returns, js = null, c = null) => {
     const call = +existing;
     const replacement = new Number(call);
     replacement.name = name;
-    replacement.import = existing.import;
+    replacement.moduleName = moduleName;
     replacement.params = params;
     replacement.returns = returns;
     replacement.js = js;
@@ -50,11 +51,10 @@ export const createImport = (name, params, returns, js = null, c = null) => {
   }
 
   const call = importedFuncs.length;
-  const ident = String.fromCharCode(97 + importedFuncs.length);
 
   const obj = importedFuncs[name] = importedFuncs[call] = new Number(call);
   obj.name = name;
-  obj.import = ident;
+  obj.moduleName = moduleName;
   obj.params = params;
   obj.returns = returns;
   obj.js = js;

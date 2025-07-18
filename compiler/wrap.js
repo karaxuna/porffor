@@ -491,6 +491,23 @@ ${flags & 0b0001 ? `    get func idx: ${get}
 
 export { createImport };
 
+function extractImports(source) {
+  const importRegex = /\/\/\s*@import\s+(?:(\w+)\.)?(\w+)\s+(\d+)\s+(\d+)/g;
+  const imports = [];
+  let match;
+
+  while ((match = importRegex.exec(source)) !== null) {
+      imports.push({
+          module: match[1] || '',
+          name: match[2],
+          params: parseInt(match[3], 10),
+          returns: parseInt(match[4], 10)
+      });
+  }
+
+  return imports;
+}
+
 /**
  * Compile given JavaScript source code. // todo: more docs here (sorry)
  *
@@ -499,6 +516,11 @@ export { createImport };
  * @param {(str: string) => void} print - Function to use for printing (used by console.log etc)
  */
 export default (source, module = undefined, print = str => process.stdout.write(str)) => {
+  const dynamicImports = extractImports(source);
+  for (const dynamicImport of dynamicImports) {
+    createImport(dynamicImport.name, dynamicImport.params, dynamicImport.returns, () => {}, undefined, dynamicImport.module);
+  }
+
   createImport('print', 1, 0, i => print(i.toString()));
   createImport('printChar', 1, 0, i => print(String.fromCharCode(i)));
   createImport('time', 0, 1, () => performance.now());
@@ -558,15 +580,18 @@ export default (source, module = undefined, print = str => process.stdout.write(
   let instance;
   try {
     const module = new WebAssembly.Module(wasm);
-    instance = new WebAssembly.Instance(module, {
-      '': Object.keys(importedFuncs).reduce((acc, y) => {
-        const x = importedFuncs[y];
-        if (!x.import) return acc;
+    const importObject = {};
+    Object.keys(importedFuncs).forEach(y => {
+      const x = importedFuncs[y];
+      if (!x.name) return;
 
-        acc[x.import] = x.js ?? (() => {});
-        return acc;
-      }, {})
+      const moduleName = x.moduleName || "";
+      if (!importObject[moduleName]) {
+        importObject[moduleName] = {};
+      }
+      importObject[moduleName][x.name] = x.js ?? (() => {});
     });
+    instance = new WebAssembly.Instance(module, importObject);
   } catch (e) {
     if (!Prefs.d) throw e;
     if (!(e instanceof WebAssembly.CompileError)) throw e;
